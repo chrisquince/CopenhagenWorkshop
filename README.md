@@ -3,7 +3,7 @@
 
 Provisional schedule
 
-##Monday
+## Monday
 
 9:30 – 11:00: Introductory lecture, how to design a microbial metagenomics study and 
 basic principles of microbial metagenomics bioinformatics (CQ)
@@ -15,7 +15,7 @@ basic principles of microbial metagenomics bioinformatics (CQ)
 13:30 - 14:30: Taxonomic and functional profiling [lecture](Lectures/Profiling.pdf)
 14:30 - 16:30: Taxonomic and functional profiling [tutoria](Tutorials/Profiling.md)
 
-##Tuesday
+## Tuesday
 
 9:30 - 10:30: Metagenomics assembly [lecture](Lectures/Assembly.pdf)
 10:30 - 12:30: Metagenomics assembly [tutorial](Tutorials/Assembly.md)
@@ -29,7 +29,7 @@ basic principles of microbial metagenomics bioinformatics (CQ)
 
 16:00 - 17:30: Exercise on individual or public data sets (download) 
 
-##Wednesday 
+## Wednesday 
 
 9:30 - 10:30: Metagenomics binning [lecture][Lectures/Binning.pdf]
 10:30 - 12:30: Metagenomics assembly [tutorial](Tutorials/Binning.md)
@@ -41,7 +41,7 @@ basic principles of microbial metagenomics bioinformatics (CQ)
 15:30 - 16:00: Coffee break
 16:00 - 17:00: MAG annotation (tutorial) [tutorial](Tutorials/MAGs.md)
 
-##Thursday
+## Thursday
 
 9:30 - 10:30: Trait assignment of genomes and MAGs [lecture](Lectures/Traits.pdf)
 10:30 - 12:30: Functional assignment of MAGs [tutorial](tutorial/Traits.md)
