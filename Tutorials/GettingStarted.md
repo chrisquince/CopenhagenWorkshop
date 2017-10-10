@@ -17,7 +17,7 @@ Discussion point environment variables and configuration files.
 Some useful repositories should already be on the system (do not run the following):
 
 ```
-~~mkdir ~/repos~~
+~mkdir ~/repos~
 ~~cd repos~~
 ~~git clone https://github.com/chrisquince/WorkshopSept2017.git~~
 ```
