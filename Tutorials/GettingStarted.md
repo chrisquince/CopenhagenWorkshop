@@ -12,25 +12,20 @@ May need this:
 source .profile 
 ```
 
-Add this line to .profile using vi:
-```
-PATH=$HOME/repos/WorkshopSept2017/scripts:$PATH
-```
-
 Discussion point environment variables and configuration files.
 
-Clone in the workshop repos:
+Some useful repositories should already be on the system (do not run the following):
 
 ```
-mkdir ~/repos
-cd repos
-git clone https://github.com/chrisquince/WorkshopSept2017.git
+~~mkdir ~/repos~~
+~~cd repos~~
+~~git clone https://github.com/chrisquince/WorkshopSept2017.git~~
 ```
 
 and another two we will need:
 ```
-git clone https://github.com/chrisquince/MAGAnalysis.git
-git clone https://github.com/chrisquince/StrainMetaSim.git
+~~git clone https://github.com/chrisquince/MAGAnalysis.git~~
+~~git clone https://github.com/chrisquince/StrainMetaSim.git~~
 ```
 
 Then we make ourselves a Projects directory:
