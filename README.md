@@ -13,6 +13,7 @@ basic principles of microbial metagenomics bioinformatics (CQ)
 12:30 - 13:30: Lunch
 
 13:30 - 14:30: Taxonomic and functional profiling [lecture](Lectures/Profiling.pdf)
+
 14:30 - 16:30: Taxonomic and functional profiling [tutoria](Tutorials/Profiling.md)
 
 ## Tuesday
