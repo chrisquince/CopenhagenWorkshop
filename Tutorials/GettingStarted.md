@@ -18,8 +18,10 @@ Some useful repositories should already be on the system (do not run the followi
 
 ```
 ~mkdir ~/repos~
+
 ~~cd repos~~
-~~git clone https://github.com/chrisquince/WorkshopSept2017.git~~
+
+~~ git clone https://github.com/chrisquince/WorkshopSept2017.git ~~
 ```
 
 and another two we will need:
