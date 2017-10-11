@@ -17,64 +17,108 @@ Discussion point environment variables and configuration files.
 Some useful repositories should already be on the system (do not run the following):
 
 
-~mkdir ~/repos~
+~~mkdir ~/repos~~
 
 ~~cd repos~~
 
-~~ git clone https://github.com/chrisquince/WorkshopSept2017.git ~~
+~~git clone https://github.com/chrisquince/WorkshopSept2017.git~~
 
 
 and another two we will need:
-```
+
+
 ~~git clone https://github.com/chrisquince/MAGAnalysis.git~~
 ~~git clone https://github.com/chrisquince/StrainMetaSim.git~~
-```
 
-Then we make ourselves a Projects directory:
+## Data sets
 
-```
-mkdir ~/Projects
-mkdir ~/Projects/AD
-cd ~/Projects/AD
-mkdir Reads
-cd Reads
-```
-
-### Downloading the raw sequence reads
-
-and download the anaerobic digester sequences:
-```
-cut -d"," -f7 ~/repos/WorkshopSept2017/data/metaFP1B.csv | sed '1d' > ForwardURL.txt
-cut -d"," -f8 ~/repos/WorkshopSept2017/data/metaFP1B.csv | sed '1d' > ReverseURL.txt
-```
+All the tutorial data sets are available in the Data directory go and have a look:
 
 ```
-while read line
-do
-    wget $line
-done <  ForwardURL.txt
+cd Data
+ls
 ```
 
-Can you work out how to download the reverse reads?
+Have a look in each sub directory. Then go into the AD folder and look at the meta data file:
+
+```
+cd AD
+more Meta.csv 
+```
+
+And the reads
+
+```
+cd ReadsSub
+```
 
 ### Fastq file format
 
 The reads are stored as pairs of fastq files.
 ```
-head -n 10 S102_R1.fastq
+head -n 10 S102_Sub_R1.fastq
 ```
 Sometimes these will be zipped.
 
 Lets have a look at the wikipedia page on [fastq format](https://en.wikipedia.org/wiki/FASTQ_format).
 
 Count up number of reads in a fastq file:
+
 ```
-cat S102_R1.fastq | echo $((`wc -l`/4))
+cat S102_Sub_R1.fastq | echo $((`wc -l`/4))
 ```
 
-What will the number be in S102_R2.fastq?
+Try to understand the anatomy of this command. What does 'cat' do and the '|' what about 'echo' and 'wc'? 
+
+
+What will the number be in S102_Sub_R2.fastq?
 
 Discussion point: What are paired end reads?
+
+In fact these reads have been subsampled to make the tutorial (barely) tractable.
+
+### Now lets look at the gut samples
+
+```
+cd ~/Data/Gut
+```
+
+These are in different sequence format, what is it?
+
+```
+head -n 10 Reads/C13_R1.fasta
+```
+
+This is a convenient way to count reads in a fasta file:
+```
+grep -c ">" Reads/C13_R1.fasta
+```
+
+
+### And we have one ancient DNA sample
+
+```
+cd ~/Data/Ragna
+```
+
+What do you notice about this file format. Can you figure out a command to count the number of reads in this file the key is the command 'zcat'
+
+### And some synthetic samples
+
+```
+cd ~/Data/Synthetic
+ls
+```
+
+What is the 'Genomes.tar.gz' here is how we can extract it:
+
+```
+tar -xvzf Genomes.tar.gz
+```
+
+
+###Subsampling reads
+
 
 Lets counts up reads in all files:
 ```
@@ -92,6 +136,16 @@ R
 >dev.off()
 >q()
 ```
+
+Then we make ourselves a Projects directory:
+
+```
+mkdir ~/Projects
+mkdir ~/Projects/AD
+cd ~/Projects/AD
+mkdir Reads
+cd Rea
+
 
 Now we run fastqc on one of the samples:
 ```
