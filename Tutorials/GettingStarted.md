@@ -75,7 +75,20 @@ What will the number be in S102_Sub_R2.fastq?
 
 Discussion point: What are paired end reads?
 
-In fact these reads have been subsampled to make the tutorial (barely) tractable.
+In fact these reads have been subsampled to make the tutorial (barely) tractable. This 
+was done with the following commands (do not run):
+
+~~cd ~/Projects/AD~~
+~~mkdir ReadsSub~~
+~~for file in Reads/*R1*fastq~~
+~~do
+    ~~base=${file##*/}~~
+    ~~stub=${base%_R1.fastq}~~
+    ~~echo $stub~~
+    ~~seqtk sample -s100 $file 1000000 > ReadsSub/${stub}_Sub_R1.fastq&~~
+    ~~seqtk sample -s100 Reads/${stub}_R2.fastq 1000000 > ReadsSub/${stub}_Sub_R2.fastq&~~
+~~done~~
+
 
 ### Now lets look at the gut samples
 
