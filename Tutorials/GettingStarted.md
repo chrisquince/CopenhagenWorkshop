@@ -116,43 +116,43 @@ What is the 'Genomes.tar.gz' here is how we can extract it:
 tar -xvzf Genomes.tar.gz
 ```
 
+## Sequence quality control
 
-###Subsampling reads
+The first thing you will want to do with raw sequence is check its quality. 
 
-
-Lets counts up reads in all files:
-```
-for file in *_R1.fastq; do cat $file | echo $((`wc -l`/4)); done > Counts.txt
-```
-
-And plot histogram, median read number is 4,917,354:
-```
-R
->library(ggplot2)
->Counts <- read.csv('Counts.txt',header=FALSE)
->summary(Counts$V1)
->pdf("Counts.pdf")
->qplot(Counts$V1, geom="histogram") 
->dev.off()
->q()
-```
-
-Then we make ourselves a Projects directory:
+Go to the home directory:
 
 ```
-mkdir ~/Projects
-mkdir ~/Projects/AD
-cd ~/Projects/AD
-mkdir Reads
-cd Rea
+cd ~
+```
 
+and make a directory called 'Projects' and go into it:
+
+```
+cd Projects
+```
+
+Lets make a sub-directory for the AD analysis:
+
+```
+mkdir AD
+cd AD
+```
+
+And a directory for the AD analysis. Now we want to conveniently access the Data but we 
+want that directory kept clean. We can use a symbolic link for this:
+
+```
+ln -s ~/Data/AD/ReadsSub ReadsSub
+```
 
 Now we run fastqc on one of the samples:
 ```
-fastqc S102_R1.fastq
+fastqc ./ReadsSub/S102_Sub_R1.fastq
+fastqc ./ReadsSub/S102_Sub_R2.fastq
 ```
 
-Look at the output files:
+Look at the output files (probably best to download to local computer):
 ```
-ls
-firefox S102_R1_fastqc.html 
+scp ubuntu@137.205.69.49:~/Projects/AD/ReadsSub/*fastqc*html .
+```

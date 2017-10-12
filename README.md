@@ -5,16 +5,13 @@ Provisional schedule
 
 ## Monday
 
-9:30 – 11:00: Introductory lecture, how to design a microbial metagenomics study and 
-basic principles of microbial metagenomics bioinformatics (CQ)
+10:00 – 11:00: Taxonomic and functional profiling of metagenomes [lecture](Lectures/Profiling.pdf)
 
-10:30 - 12:30: [Getting started tutorial](Tutorials/GettingStarted.md)
+11:00 - 12:30: [Getting started tutorial](Tutorials/GettingStarted.md)
 
 12:30 - 13:30: Lunch
 
-13:30 - 14:30: Taxonomic and functional profiling [lecture](Lectures/Profiling.pdf)
-
-14:30 - 16:30: Taxonomic and functional profiling [tutoria](Tutorials/Profiling.md)
+13:30 - 16:30: Taxonomic and functional profiling [tutorial](Tutorials/Profiling.md)
 
 ## Tuesday
 
