@@ -172,8 +172,11 @@ scp ubuntu@137.205.69.49:~/Projects/AD/ReadsSub/*fastqc*html .
 
 You should see something like this:
 
-[S102_Sub_R1_trimmed_fastqc.html](https://github.com/chrisquince/CopenhagenWorkshop/blob/master/Results/FastQC/S102_Sub_R1_trimmed_fastqc.html)
+S102_Sub_R1_trimmed_fastqc.html
 
+<https://github.com/chrisquince/CopenhagenWorkshop/blob/master/Results/FastQC/S102_Sub_R1_trimmed_fastqc.html>
+
+[I'm an inline-style link](https://www.google.com)
 
 [S102_Sub_R2_trimmed_fastqc.html](https://github.com/chrisquince/CopenhagenWorkshop/blob/master/Results/FastQC/S102_Sub_R2_trimmed_fastqc.html)
 
