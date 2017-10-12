@@ -123,7 +123,7 @@ cd ~/Data/Synthetic
 ls
 ```
 
-What is the 'Genomes.tar.gz' here is how we can extract it:
+What is the 'Genomes.tar.gz'? Here is how we can extract it:
 
 ```
 tar -xvzf Genomes.tar.gz
@@ -169,3 +169,11 @@ Look at the output files (probably best to download to local computer):
 ```
 scp ubuntu@137.205.69.49:~/Projects/AD/ReadsSub/*fastqc*html .
 ```
+
+You should see something like this:
+
+[S102_Sub_R1_trimmed_fastqc.html](../Results/FastQC/S102_Sub_R1_trimmed_fastqc.html)
+
+
+[S102_Sub_R2_trimmed_fastqc.html](../Results/FastQC/S102_Sub_R2_trimmed_fastqc.html)
+
