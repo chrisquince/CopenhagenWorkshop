@@ -3,54 +3,27 @@
 
 ## Taxonomic profiling
 
-For the taxonomic profiling we are going to subsample the fastq files to 1 million reads each 
-for performance purposes.
+Login to server:
 
 ```
-cd ~/Projects/AD
-mkdir ReadsSub
-for file in Reads/*R1*fastq
+ssh -X ubuntu@137.205.69.49
+```
+
+We will start by profiling the AD reads with Kraken. We will use forward reads only:
+
+```
+mkdir Kraken
+for file in ReadsSub/*R1*fastq
 do
     base=${file##*/}
     stub=${base%_R1.fastq}
     echo $stub
-    seqtk sample -s100 $file 1000000 > ReadsSub/${stub}_Sub_R1.fastq&
-    seqtk sample -s100 Reads/${stub}_R2.fastq 1000000 > ReadsSub/${stub}_Sub_R2.fastq&
-done
-```
-
-We will use Kraken for profiling these reads but first lets convert them to interleaved fastq:
-
-```
-mkdir ReadsSub12/
-for file in ReadsSub/*R1*fastq
-do
-    
-    stub=${file%_R1.fastq}
-    echo $stub
-    base=${file##*/}
-    python ~/repos/WorkshopSept2017/scripts/Interleave.py $file ${stub}_R2.fastq ReadsSub12/${base}_R12.fastq
-    
-done
-
-```
-
-How does Kraken work?
-![Kraken Figure1](Figures/KrakenFig.jpg)
-
-Discussion point what is a kmer?
-
-Now run kraken on the interleaved fastq:
-```
-mkdir Kraken
-for file in ReadsSub12/*R12*fastq
-do
-    base=${file##*/}
-    stub=${base%_R12.fastq}
-    echo $stub
     kraken --db ~/Databases/minikraken_20141208/ --threads 8 --preload --output Kraken/${stub}.kraken $file
 done
 ```
+
+We match against the 'minikraken' database which corresponds to RefSeq 2014.
+Would we expect the profile to differ between R1 and R2?
 
 Look at percentage of reads classified. Anaerobic digesters are under studied communities!
 
@@ -78,6 +51,8 @@ We can get a report of the predicted genera:
 cat  Kraken/S102_Sub.kraken.report | awk '$4=="G"'
 ```
 
+What is awk?
+
 Now lets get reports on all samples:
 ```
 for file in Kraken/*.kraken
@@ -100,21 +75,47 @@ done
 
 And then run associated script:
 ```
-./CollateK.pl Kraken > GeneraKraken.csv
+CollateK.pl Kraken > GeneraKraken.csv
 ```
 There is a clear shift in genera level structure over time but no association with replicate.
 
 ![Kraken Genera NMDS](Figures/GeneraKNMDS.png)
 
+
+
 We can generate this plot either locally or on the server by:
 
 ```
+cp ~/Data/AD/Meta.csv .
 Rscript ~/repos/WorkshopSept2017/RAnalysis/GeneraKNMDS.R 
 ```
 
 Discussion points:
 1. Non-metric multidimensional scaling
 2. Multivariate permutational ANOVA
+
+<a name="functionalprofiling"/>
+
+## Running Metaphlan2 on the human gut
+
+```
+cd ~/Projects
+mkdir ~/Projects/Gut
+ln -s ~/Data/Gut/Reads Reads
+```
+
+There are too many reads to work with here so first thing we will do is subsample them to 100,000
+
+```
+mkdir ReadsSub
+for file in Reads/*fasta
+do
+    base=${file##*/}
+    stub=${base%.fasta}
+    echo $stub
+    seqtk sample -s100 $file 100000 > ReadsSub/${stub}_Sub_R1.fastq
+done
+```
 
 <a name="functionalprofiling"/>
 

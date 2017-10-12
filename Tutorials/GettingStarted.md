@@ -191,4 +191,59 @@ Try to understand bash for loop structure it is very useful!
 
 ## SeqQC for ancient DNA sample
 
-I want you to run fastqc and trim_galore on the Ragna sample by yourselves.
+I want you to run fastqc and trim_galore on the Ragna sample by yourselves. Put the results in a directory ~/Projects/Ragna and ~/Projects/Ragna/Trim.
+
+## Removing human contamination 
+
+The easiest way to remove any contaminating DNA is by simply mapping onto that genome. Obviously this assumes that you have the genome. The Ragna sample will contain human DNA
+that may interfere with downstream analysis. We can remove the human reads as follows:
+
+```
+cd ~/Projects/Ragna
+```
+
+We have saved a copy of the human genome on the server:
+
+```
+more ~/Databases/Human/human_g1k_v37.fasta
+```
+
+This has been indexed previously:
+
+~~bwa index human_g1k_v37.fasta~~
+
+Enabling us to map reads against it with BWA:
+
+```
+mkdir MapHuman
+cd MapHuman
+bwa mem -t 8 ~/Databases/Human/human_g1k_v37.fasta ../Trim/sk152_dentine_L1.1_trimmed.fq.gz  > sk152_dentine_trimmed_maphuman.sam
+```
+
+What does the '-t 8' flag do?
+
+This generates a 'sam file' alignment of the trimmed reads against the human genome. Have a look at it? Make sense?
+
+
+We convert this sam to bam...
+
+```
+samtools view -bS  sk152_dentine_trimmed_maphuman.sam > sk152_dentine_trimmed_maphuman.bam
+```
+
+and then filter out the *unmapped* reads only:
+
+```
+    samtools view -b -f 4 sk152_dentine_trimmed_maphuman.bam > NotHuman/${stub2}.bam
+```
+
+
+    bamToFastq -i NotHuman/${stub2}.bam -fq NotHuman/${stub2}.fq
+
+    samtools view -b -F 4 ${stub}_maphuman.bam > Human/${stub2}.bam
+
+    bamToFastq -i Human/${stub2}.bam -fq Human/${stub2}.fq
+
+    samtools sort ${stub}.mapped.bam > ${stub}.mapped.sorted.bam
+    bedtools genomecov -ibam ${stub}.mapped.sorted.bam -g HLengths.txt > ${stub}_cov.txt
+```
