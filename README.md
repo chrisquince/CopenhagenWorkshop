@@ -21,13 +21,13 @@ Provisional schedule
 
 12:30 - 13:30: Lunch
 
-13:30 - 13:30: Metagenomics binning [lecture][Lectures/Binning.pdf]
+13:30 - 13:30: Metagenomics binning [lecture](Lectures/Binning.pdf)
 
 14:30 - 17:00: Binning and MAG annotation continued [tutorial](Tutorials/Binning.md)
 
 ## Wednesday 
 
-9:30 - 10:30: Metagenomics de novo strain resolution [lecture][Lectures/Strain.pdf]
+9:30 - 10:30: Metagenomics de novo strain resolution [lecture](Lectures/Strain.pdf)
 
 10:30 - 12:30: Metagenomics strain resolution [tutorial](Tutorials/Strain.md)
 
