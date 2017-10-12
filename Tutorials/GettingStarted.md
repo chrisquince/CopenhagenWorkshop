@@ -188,3 +188,7 @@ for file in ../*ReadsSub/*fastq; do trim_galore $file ; done
 ```
 
 Try to understand bash for loop structure it is very useful!
+
+## SeqQC for ancient DNA sample
+
+I want you to run fastqc and trim_galore on the Ragna sample by yourselves.
