@@ -194,7 +194,7 @@ and generate a heatmap:
 python ~/Installation/metaphlan2/utils/metaphlan_hclust_heatmap.py -c bbcry --top 25 --minv 0.1 -s log --in MetaphlanMerged/merged_abundance_table.txt --out MetaphlanMerged/abundance_heatmap.png
 ```
 
-![Metaphlan gut heatmap](../Figures/abundance_heatmap.png)
+![Metaphlan gut heatmap](https://github.com/chrisquince/CopenhagenWorkshop/blob/master/Figures/abundance_heatmap.png)
 
 <a name="functionalprofiling"/>
 
