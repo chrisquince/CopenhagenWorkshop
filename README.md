@@ -16,36 +16,33 @@ Provisional schedule
 ## Tuesday
 
 9:30 - 10:30: Metagenomics assembly [lecture](Lectures/Assembly.pdf)
-10:30 - 12:30: Metagenomics assembly [tutorial](Tutorials/Assembly.md)
+
+10:30 - 12:30: Metagenomics assembly and binning tutorial [tutorial](Tutorials/Binning.md)
 
 12:30 - 13:30: Lunch
 
-13:30 - 14:30: Multivariate statistics for microbial community analysis (lecture)
-14:30 – 15:30: Multivariate statistics (tutorial)
+13:30 - 13:30: Metagenomics binning [lecture][Lectures/Binning.pdf]
 
-15:30 - 16:00: Coffee break
-
-16:00 - 17:30: Exercise on individual or public data sets (download) 
+14:30 - 17:00: Binning and MAG annotation continued [tutorial](Tutorials/Binning.md)
 
 ## Wednesday 
 
-9:30 - 10:30: Metagenomics binning [lecture][Lectures/Binning.pdf]
-10:30 - 12:30: Metagenomics assembly [tutorial](Tutorials/Binning.md)
+9:30 - 10:30: Metagenomics de novo strain resolution [lecture][Lectures/Strain.pdf]
+
+10:30 - 12:30: Metagenomics strain resolution [tutorial](Tutorials/Strain.md)
 
 12:30 - 13:30: Lunch
 
-13:30 - 14:30: Metagenomics strain resolution [lecture][Lectures/Binning.pdf]
-14:30 - 15:30: Metagenomics strain resolution [tutorial](Tutorials/Binning.md)
-15:30 - 16:00: Coffee break
-16:00 - 17:00: MAG annotation (tutorial) [tutorial](Tutorials/MAGs.md)
+
+13:30 - 17:00: Metagenomics strain resolution continued [tutorial](Tutorials/Binning.md)
 
 ## Thursday
 
 9:30 - 10:30: Trait assignment of genomes and MAGs [lecture](Lectures/Traits.pdf)
+
 10:30 - 12:30: Functional assignment of MAGs [tutorial](tutorial/Traits.md)
+
 12:30 - 13:30: Lunch
-13:30 - 15:30: Exercise on individual or public data sets (profiling)
-15:30 - 16:00: Coffee break
-16:00 - 17:30: Exercise on individual or public data sets (assembly)
+
 
 
