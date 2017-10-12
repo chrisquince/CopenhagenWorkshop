@@ -96,6 +96,41 @@ Discussion points:
 
 <a name="functionalprofiling"/>
 
+## How to build a Kraken database
+
+Mick Watson has written some Perl scripts that will download and build 
+kraken databases for bacteria, archaea, fungi, protozoans and viruses at various stages of completion.
+
+[Kraken DB install scripts](https://github.com/mw55309/Kraken_db_install_scripts)
+
+Note: these will take a while so be careful.
+
+To build a custom database, first we need the NCBI taxonomy:
+
+```
+DB_NAME="kraken_db"
+kraken-build --download-taxonomy --db $DB_NAME
+```
+
+Then let’s imagine we have a directory full of FNA files 
+(the download_*.pl scripts by Mick will create well formatted .fna files; 
+otherwise you can download directly from the NCBI)
+
+```
+for f in `ls mydir/*.fna`; do
+  kraken-build --add-to-library $f --db $DB_NAME
+done
+```
+
+Then finally
+
+```
+kraken-build --build --db $DB_NAME
+```
+
+This will create a large kmer index file in a directory with the same name as your kraken database. 
+Roughly speaking, the size of this file represents the amount of RAM you will need to run Kraken
+
 ## Running Metaphlan2 on the human gut
 
 ```
@@ -113,9 +148,53 @@ do
     base=${file##*/}
     stub=${base%.fasta}
     echo $stub
-    seqtk sample -s100 $file 100000 > ReadsSub/${stub}_Sub_R1.fastq
+    seqtk sample -s100 $file 100000 > ReadsSub/${stub}_Sub.fasta
 done
 ```
+
+Much easier to work with
+```
+grep -c ">" ReadsSub/*fasta
+```
+
+And we will cat these together for convenience:
+```
+for file in ReadsSub/*_R1_Sub.fasta
+do
+    base=${file##*/}
+    stub=${base%_R1_Sub.fasta}
+    cat $file ReadsSub/${stub}_R2_Sub.fasta > ReadsSub/${stub}_R12.fasta
+done
+```
+
+Note these files are not true interleaved fasta.
+
+```
+mkdir MetaphlanResults
+for file in ReadsSub/*_R12.fasta
+do
+    base=${file##*/}
+    stub=${base%_R12.fasta}
+
+    echo $stub
+    
+    python ~/Installation/metaphlan2/metaphlan2.py $file --input_type fasta --nproc 8 > MetaphlanResults/${stub}_pm.txt
+done
+```
+
+
+
+Then when we are done we merge these tables:
+```
+python ~/Installation/metaphlan2/merge_metaphlan_tables.py MetaphlanResults/*_pm.txt > MetaphlanMerged/merged_abundance_table.txt
+```
+
+and generate a heatmap:
+```
+python ~/Installation/metaphlan2/utils/metaphlan_hclust_heatmap.py -c bbcry --top 25 --minv 0.1 -s log --in MetaphlanMerged/merged_abundance_table.txt --out MetaphlanMerged/abundance_heatmap.png
+```
+
+![Metaphlan gut heatmap](Figures/abundance_heatmap.png)
 
 <a name="functionalprofiling"/>
 
