@@ -198,7 +198,15 @@ python ~/Installation/metaphlan2/utils/metaphlan_hclust_heatmap.py -c bbcry --to
 
 <a name="functionalprofiling"/>
 
-## Functional gene profiling
+## Centrifuge profiling of Ragna reads
+
+Run centrifuge against Prokaryotes as follows:
+
+```
+centrifuge -x ~/Databases/Centrifuge/p_compressed -U sk152_dentine_nothuman.fq -q --threads 8 > sk152_dentine_nothuman_cent.tsv
+```
+
+## Functional gene profiling of AD reads
 
 To perform functional gene profiling we will use Diamond to map against the KEGG database. 
 First we will set an environmental variable to point to our copy of the Kegg:
@@ -206,12 +214,13 @@ First we will set an environmental variable to point to our copy of the Kegg:
 export KEGG_DB=~/Databases/keggs_database/KeggUpdate/
 ```
 ```
+cd ~/Projects/AD
 mkdir KeggD
-for file in ReadsSub12/*R12.fastq
+for file in ReadsSub/*R1.fastq
 do 
    
-   stub=${file%_R12.fastq}
-   stub=${stub#ReadsSub12\/}
+   stub=${file%_R1.fastq}
+   stub=${stub#ReadsSub\/}
    echo $stub
    if [ ! -f KeggD/${stub}.m8 ]; then
     echo "KeggD/${stub}.m8"

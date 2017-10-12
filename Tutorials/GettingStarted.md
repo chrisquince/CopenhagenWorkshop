@@ -228,22 +228,48 @@ This generates a 'sam file' alignment of the trimmed reads against the human gen
 We convert this sam to bam...
 
 ```
-samtools view -bS  sk152_dentine_trimmed_maphuman.sam > sk152_dentine_trimmed_maphuman.bam
+samtools view -bS sk152_dentine_trimmed_maphuman.sam > sk152_dentine_trimmed_maphuman.bam
 ```
 
 and then filter out the *unmapped* reads only:
 
 ```
-    samtools view -b -f 4 sk152_dentine_trimmed_maphuman.bam > NotHuman/${stub2}.bam
+cd ..
+mkdir NotHuman
+samtools view -b -f 4 MapHuman/sk152_dentine_trimmed_maphuman.bam > NotHuman/${stub2}.bam
 ```
 
+Now we use a third party tool to turn the bam alignment back into fastq:
 
-    bamToFastq -i NotHuman/${stub2}.bam -fq NotHuman/${stub2}.fq
+```
+bamToFastq -i NotHuman/sk152_dentine_nothuman.bam -fq NotHuman/sk152_dentine_nothuman.fq
+```
 
-    samtools view -b -F 4 ${stub}_maphuman.bam > Human/${stub2}.bam
+How many reads did not map to human?
 
-    bamToFastq -i Human/${stub2}.bam -fq Human/${stub2}.fq
+Also separate of those that did map...
 
-    samtools sort ${stub}.mapped.bam > ${stub}.mapped.sorted.bam
-    bedtools genomecov -ibam ${stub}.mapped.sorted.bam -g HLengths.txt > ${stub}_cov.txt
+```
+samtools view -b -F 4 MapHuman/sk152_dentine_trimmed_maphuman.bam > MapHuman/sk152_dentine_human.bam
+
+bamToFastq -i MapHuman/sk152_dentine_human.bam -fq MapHuman/sk152_dentine_human.fq
+
+```
+
+Just for fun lets calculate the coverage of human chromosomes:
+
+```
+samtools sort MapHuman/sk152_dentine_human.bam > MapHuman/sk152_dentine_human.sorted.bam
+
+bedtools genomecov -ibam MapHuman/sk152_dentine_human.sorted.bam -g ~/Databases/Human/human_g1k_v37.len > MapHuman/sk152_dentine_human_cov.txt
+```
+
+Calculates coverage histograms across positions use some awk to calculate mean chromosome coverages:
+```
+awk -F"\t" '{l[$1]=l[$1]+($2 *$3);r[$1]=$4} END {for (i in l){print i","(l[i]/r[i])}}' MapHuman/sk152_dentine_human_cov.txt > MapHuman/sk152_dentine_human_cov.csv
+```
+
+What sex was Ragna?
+```
+more MapHuman/sk152_dentine_human_cov.csv
 ```
