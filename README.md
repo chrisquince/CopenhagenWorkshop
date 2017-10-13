@@ -27,9 +27,9 @@ Provisional schedule
 
 ## Wednesday 
 
-9:30 - 10:30: Metagenomics de novo strain resolution [lecture](Lectures/Strain.pdf)
+9:30 - 10:30: Metagenomics de novo strain resolution [lecture](Lectures/StrainResolution.pdf)
 
-10:30 - 12:30: Metagenomics strain resolution [tutorial](Tutorials/Strain.md)
+10:30 - 12:30: Metagenomics strain resolution [tutorial](Tutorials/StrainResolution.md)
 
 12:30 - 13:30: Lunch
 
@@ -40,7 +40,7 @@ Provisional schedule
 
 9:30 - 10:30: Trait assignment of genomes and MAGs [lecture](Lectures/Traits.pdf)
 
-10:30 - 12:30: Functional assignment of MAGs [tutorial](tutorial/Traits.md)
+10:30 - 12:30: Functional assignment of MAGs [tutorial](Tutorials/Traits.md)
 
 12:30 - 13:30: Lunch
 
