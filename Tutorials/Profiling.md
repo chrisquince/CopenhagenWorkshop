@@ -206,6 +206,12 @@ Run centrifuge against Prokaryotes as follows:
 centrifuge -x ~/Databases/Centrifuge/p_compressed -U sk152_dentine_nothuman.fq -q --threads 8 > sk152_dentine_nothuman_cent.tsv
 ```
 
+Over 50% of the reads are classified to Salmonella enterica:
+```
+Salmonella enterica	28901	species	6689149	58538	50642	0.557764
+```
+
+
 ## Functional gene profiling of AD reads
 
 To perform functional gene profiling we will use Diamond to map against the KEGG database. 
