@@ -292,4 +292,4 @@ cd ..
 We can view modules as multivariate data just like the genera relative frequencies. Is there a stronger or weaker relationship between time and module abundance than there was 
 for the genera abundances?
 
-![Modules](Figures/Modules.png)
+![Modules](../Figures/Modules.png)
