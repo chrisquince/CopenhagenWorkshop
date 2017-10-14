@@ -245,9 +245,9 @@ we think are in our assembly. We can get this from the assembly by just calculat
 median number of single-copy core genes:
 
 ```bash
-?cd $METASIMWD
-?cp /class/stamps-shared/CDTutorial/scgs.txt .
-$CDSCRIPTS/CountSCGs.pl scgs.txt < Annotate/final_contigs_gt1000_c10K.cogs | cut -d"," -f2 | awk -f $CDSCRIPTS/median.awk
+cp /home/ubuntu/repos/CONCOCT/scgs/scg_cogs_min0.97_max1.03_unique_genera.txt scgs.txt
+tr -d "\r" < scgs.txt > scgsR.txt
+CountSCGs.pl scgsR.txt < Annotate/final_contigs_gt1000_c10K.cogs | cut -d"," -f2 | awk -f ~/bin/median.awk
 ```
 
 This should give **8** which since that is our species number is reassuring.
@@ -278,7 +278,8 @@ python $CDSCRIPTS/CompleteClusters.py clustering_gt1000_scg.tsv > Cluster75.txt
 In real studies it is important to know the coverage of each bin in each sample. This can then be transformed into relative copy numbers for correlation with meta-data:
 
 ```
-python $CDSCRIPTS/ClusterMeanCov.py Coverage.csv clustering_gt1000.csv ../Assembly/final_contigs_c10K.fa > Cluster_Cov.csv
+sed '1d' clustering_gt1000.csv > clustering_gt1000R.csv
+python $DESMAN/scripts/ClusterMeanCov.py Coverage.csv clustering_gt1000R.csv ../Assembly/final_contigs_c10K.fa > Cluster_Cov.csv
 ```
 
 We can quickly use R to sum up the cluster coverages:
@@ -290,7 +291,7 @@ R
 >q()
 ```
 
-We have two clusters, Cluster7 and Cluster16 that have a total coverage 
+We have two clusters, Cluster12 and Cluster9 that have a total coverage 
 of > 100 and are 75% pure and complete, this is typically the minimum coverage necessary for strain resolution.
 
 ### Comparing to known reference genome assignments
@@ -298,15 +299,19 @@ of > 100 and are 75% pure and complete, this is typically the minimum coverage n
 These reads were generated synthetically _in silico_ from known genomes. It is therefore possible to compare the CONCOCT binning results to the assignments of contigs to genomes. This will not be possible for a genuine experimental metagenome. The assignments of contigs to genomes have been precomputed for you:
 
 ```bash
-cd $METASIMWD
-cp /class/stamps-shared/CDTutorial/AssignContigs.tar.gz .
-tar -xvzf AssignContigs.tar.gz
+mkdir AssignContigs
+cd AssignContigs
+for file in ../Map/*sorted.bam; do samtools index $file; done
+cat ../Genomes/*tmp > Genomes.fa
+python ~/bin/contig_read_count_per_genomeM.py ../Assembly/final_contigs_c10K.fa Genomes.fa ../Map/*sorted.bam > map_counts.tsv
+python ~/bin/MapCounts.py ../Genomes ~/Data/Synthetic/select.tsv map_counts.tsv
+Filter.pl < Species.csv > Contig_Species.csv
+Filter.pl < Strain.csv > Contig_Strain.csv
 ```
 
 Then move into this directory and run the following CONCOCT script which calculates accuracy statistics for a comparison of bins to reference genomes:
 
 ```bash
-cd AssignContigs
 $CONCOCT/scripts/Validate.pl --cfile=../Concoct/clustering_gt1000.csv --sfile=Contig_Species.csv --ffile=../Assembly/final_contigs_c10K.fa  
 ```
 
@@ -325,7 +330,7 @@ Rscript $CONCOCT/scripts/ConfPlot.R -c Conf.csv -o Conf.pdf
 
 Which should give something like...
 
-![Confusion Matrix](Figures/Conf.pdf)
+![Confusion Matrix](../Figures/Conf.pdf)
 
 ## Run the DESMAN pipeline to resolve strains in each high quality bin
 
