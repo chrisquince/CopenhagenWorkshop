@@ -270,16 +270,21 @@ cd ..
 
 Kegg ortholog assignment on genes:
 ```
-    for file in Cluster*/*faa
+python ~/bin/CompleteClusters.py ../Concoct/clustering_refine_scg.tsv > Cluster75.txt
+```
+
+```
+    while read line
     do 
-   
+    file=${line}/${line}.faa
     stub=${file%.faa}
     base=${stub##*/}
     echo $base
 
     diamond blastp -d $KEGG_DB/genes/fasta/genes.dmnd -q $file -p 8 -o ${stub}.m8
-    done
+    done < Cluster75.txt
 ```
+
 
 Discussion point why blastp rather than blastx?
 
@@ -311,24 +316,7 @@ Discussion point, trivial parallelisation using bash.
 
 We then can create a table of Kegg orthologs across all clusters.
 ```
-~/repos/MAGAnalysis/scripts/CollateHits.pl > CollateHits.csv
-```
-
-For Fred's analysis we only want good clusters, select those using R:
-```
-R
->CollateHits <- read.csv("CollateHits.csv",header=TRUE,row.names=1)
->scg_ref <- read.table("../Concoct/clustering_refine_scg.tsv",header=TRUE,row.names=1)
->scg_ref <- scg_ref[,-1]
->scg_ref <- scg_ref[,-1]
->rownames(scg_ref) <- gsub("^","C",rownames(scg_ref))
->
->CollateHits <- t(CollateHits)
->CollateHits <- CollateHits[rownames(scg_ref),]
->CollateHits75 <- CollateHits[rowSums(scg_ref == 1)/36 > 0.75,]
->CollateHits75 <- CollateHits75[,colSums(CollateHits75) > 0]
->write.csv(t(CollateHits75),"CollateHits75.csv",quote=FALSE)
->q()
+~/repos/MAGAnalysis/scripts/CollateHits.pl > CollateHits75.csv
 ```
 
 Discussion point any methanogens?
@@ -483,12 +471,12 @@ Then we may want to map taxaids to species names before building tree:
 Finally we get to build our tree:
 
 ```
-FastTreeMP -nt -gtr < AlignAllR.gfa 2> SelectR.out > AlignAllR.tree
+fasttreeMP -nt -gtr < AlignAllR.gfa 2> SelectR.out > AlignAllR.tree
 ```
 
 Visualise this locally with FigTree or on the web with ITOL
 
-![Methanogen tree](Figures/MethanoTree.png)
+![Methanogen tree](../Figures/MethanoTree.png)
 
 
 ### Annotating to other functional databases
@@ -505,12 +493,7 @@ hmmscan --cpu 8 --domtblout final_contigs_gt1000_c10K_faa_dbcan.dm ~/Databases/d
 
 You will need this parser script:
 ```
-wget http://csbl.bmb.uga.edu/dbCAN/download/hmmscan-parser.sh
-```
-
-Place it in your bin directory:
-```
-cp hmmscan-parser.sh ~/bin
+more ~/bin/hmmscan-parser.sh
 ```
 
 ```
@@ -526,7 +509,7 @@ You will need to update your repo to get parser. Can then split across clusters.
 
 ```
 cd ../Split
-./SplitDB.pl ../Annotate/final_contigs_gt1000_c10K_dbcan_con.hits ../Concoct/clustering_refine.csv
+SplitDB.pl ../Annotate/final_contigs_gt1000_c10K_dbcan_con.hits ../Concoct/clustering_refine.csv
 ```
 
 The above script can be created from SplitGenes.pl with one edit.
