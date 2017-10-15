@@ -342,14 +342,13 @@ cd ..
 mkdir Split
 cd Split
 $DESMAN/scripts/SplitClusters.pl ../Annotate/final_contigs_gt1000_c10K.fa ../Concoct/clustering_gt1000.csv
-$CDSCRIPTS/SplitCOGs.pl ../Annotate/final_contigs_gt1000_c10K.cogs ../Concoct/clustering_gt1000.csv
-$CDSCRIPTS/SplitGenes.pl ../Annotate/final_contigs_gt1000_c10K.genes ../Concoct/clustering_gt1000.csv
+SplitCOGs.pl ../Annotate/final_contigs_gt1000_c10K.cogs ../Concoct/clustering_gt1000.csv
+SplitGenes.pl ../Annotate/final_contigs_gt1000_c10K.genes ../Concoct/clustering_gt1000.csv
 cd ..
 ```
 
 Then we select the SCGS for each cluster:
 ```bash
-cd $METASIMWD
 while read -r cluster 
 do
     echo $cluster
@@ -357,7 +356,7 @@ do
 done < Concoct/Cluster75.txt
 ```
 
-The first step in pre-processing for DESMAN would be to split up the bam files by each cluster in turn. **Do not** run this yourselves:
+The first step in pre-processing for DESMAN would be to split up the bam files by each cluster in turn:
 
 ```
 mkdir SplitBam
@@ -365,7 +364,7 @@ mkdir SplitBam
 while read -r cluster 
 do
     grep ">" Split/${cluster}/${cluster}.fa | sed 's/>//g' > Split/${cluster}/${cluster}_contigs.txt
-    $CDSCRIPTS/AddLengths.pl Annotate/final_contigs_gt1000_c10K.len < Split/${cluster}/${cluster}_contigs.txt > Split/${cluster}/${cluster}_contigs.tsv
+    AddLengths.pl Annotate/final_contigs_gt1000_c10K.len < Split/${cluster}/${cluster}_contigs.txt > Split/${cluster}/${cluster}_contigs.tsv
     mkdir SplitBam/${cluster}
 
     for bamfile in Map/*.mapped.sorted.bam
@@ -379,12 +378,12 @@ do
     wait    
 done < Concoct/Cluster75.txt 
 ```
-**do not run the above**
+
 
 and use a third party program bam-readcount to get base frequencies at each position on each contig:
 
 ```
-module load bam-readcount
+
 
 while read line
 do
@@ -406,7 +405,7 @@ do
             
         echo $stub
 
-        (samtools index $bamfile; bam-readcount -w 1 -q 20 -l "${mag}_contigs.tsv" -f ../../Split/${mag}/${mag}.fa $bamfile 2> ReadcountFilter/${stub}.err > ReadcountFilter/${stub}.cnt)&
+        (samtools index $bamfile; bam-readcount -w 1 -q 20 -l "${mag}_contigs.tsv" -f ../../Split/${mag}/${mag}.fa $bamfile 2> ReadcountFilter/${stub}.err > ReadcountFilter/${stub}.cnt)
     
      done
      cd ..
@@ -416,7 +415,6 @@ do
 done < Concoct/Cluster75.txt
 
 ``` 
-**do not run the above**
 
 
 Then we can get the base counts on the core cogs:
@@ -430,17 +428,10 @@ do
     cd ./SplitBam/${cluster}/ReadcountFilter
     gzip *cnt
     cd ../../..
-    python $DESMAN/scripts/ExtractCountFreqGenes.py Split/${cluster}/${cluster}_core.cogs ./SplitBam/${cluster}/ReadcountFilter --output_file Variants/${cluster}_scg.freq > Variants/${cluster}log.txt&
+    python $DESMAN/scripts/ExtractCountFreqGenes.py Split/${cluster}/${cluster}_core.cogs ./SplitBam/${cluster}/ReadcountFilter --output_file Variants/${cluster}_scg.freq > Variants/${cluster}log.txt
 
 done < Concoct/Cluster75.txt 
 ``` 
-**do not run the above**
-
-Instead just copy the following tar archive into your working directory:
-```bash
-cp /class/stamps-shared/CDTutorial/Variants.tar.gz $METASIMWD
-tar -xvzf Variants.tar.gz
-```
 
 The directory contains 8 .freq files one for each cluster. If we look at one:
 ```bash
