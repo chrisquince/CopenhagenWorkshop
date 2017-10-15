@@ -181,7 +181,7 @@ Find genes using prodigal:
 
 Assign COGs change the -c flag which sets number of parallel processes appropriately:
 ```
-    export COGSDB_DIR=~/Databases/rpsblast_db
+    export COGSDB_DIR=~/Databases/rpsblast_cog_db
     $CONCOCT/scripts/RPSBLAST.sh -f final_contigs_gt1000_c10K.faa -p -c 8 -r 1
 ```
 
@@ -203,7 +203,7 @@ Then we can run the refinement step of CONCOCT:
 concoct_refine clustering_gt1000_R.csv original_data_gt1000.csv clustering_gt1000_scg_sort.csv > concoct_ref.out
 ```
 
-This should result in 20 clusters with 75% single copy copy SCGs:
+This should result in 22 clusters with 75% single copy copy SCGs:
 ```
 python $CONCOCT/scripts/COG_table.py -b ../Annotate/final_contigs_gt1000_c10K.out  -m $CONCOCT/scgs/scg_cogs_min0.97_max1.03_unique_genera.txt -c clustering_refine.csv  --cdd_cog_file $CONCOCT/scgs/cdd_to_cog.tsv > clustering_refine_scg.tsv
 ```
@@ -217,7 +217,7 @@ First let us look at the cluster completeness:
 $CONCOCT/scripts/COGPlot.R -s clustering_refine_scg.tsv -o clustering_refine_scg.pdf
 ```
 
-![SCGs](Figures/clustering_refine_scg.png) 
+![SCGs](../Figures/clustering_refine_scg.png) 
 
 Discussion point what is a MAG?
 
