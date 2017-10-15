@@ -230,9 +230,14 @@ sed 's/Map\///g' clustering_refine_cov.csv > clustering_refine_covR.csv
 
 Discussion point, how do we calculate cluster coverages?
 
+```
+cp ~/bin/ClusterCovNMDS.R .
+Rscript ./ClusterCovNMDS.R
+```
+
 How well does this correlate with time/replicates.
 
-![ClusterCov](Figures/ClusterCovNMDS.png) 
+![ClusterCov](../Figures/ClusterNMDS.png) 
 
 
 ## Annotate MAGs
