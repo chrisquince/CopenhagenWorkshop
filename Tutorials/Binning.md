@@ -262,14 +262,10 @@ Return to the analysis directory and create a new directory to bin the contigs i
 mkdir Split
 cd Split
 $DESMAN/scripts/SplitClusters.pl ../Annotate/final_contigs_gt1000_c10K.fa ../Concoct/clustering_refine.csv
-$METASIM/scripts/SplitCOGs.pl ../Annotate/final_contigs_gt1000_c10K.cogs ../Concoct/clustering_refine.csv
-$METASIM/scripts/SplitGenes.pl ../Annotate/final_contigs_gt1000_c10K.genes ../Concoct/clustering_refine.csv
+SplitCOGs.pl ../Annotate/final_contigs_gt1000_c10K.cogs ../Concoct/clustering_refine.csv
+SplitGenes.pl ../Annotate/final_contigs_gt1000_c10K.genes ../Concoct/clustering_refine.csv
+SplitFaa.pl ../Annotate/final_contigs_gt1000_c10K.faa ../Concoct/clustering_refine.csv
 cd ..
-```
-
-```
-cp ~/repos/MAGAnalysis/scripts/Prodigal.sh .
-./Prodigal.sh 2> Prodigal.out
 ```
 
 Kegg ortholog assignment on genes:
@@ -368,7 +364,7 @@ cp ../Annotate/final_contigs_gt1000_c10K.faa .
 Then we use diamond to match these against the NCBI NR.
 
 ```
-diamond blastp -p 8 -d $NR_DMD -q final_contigs_gt1000_c10K.faa -o final_contigs_gt1000_c10K.m8 > d.out
+diamond blastp -p 8 -d $NR_DMD -q final_contigs_gt1000_c10K.faa -o final_contigs_gt1000_c10K_nr.m8 > d.out
 ```
 
 Discussion point, what is the difference between NCBI NR and NT?
@@ -408,12 +404,12 @@ $DESMAN/scripts/Filter.pl 8 < final_contigs_gt1000_c10K_nr_contigs.csv | grep -v
 
 These can then be used for a cluster confusion plot:
 ```
-$CONCOCT/scripts/Validate.pl --cfile=../Concoct/clustering_refine.csv --sfile=final_contigs_gt1000_c10K_nr_species.csv --ffile=../contigs/final_contigs_c10K.fa --ofile=Taxa_Conf.csv
+$CONCOCT/scripts/Validate.pl --cfile=../Concoct/clustering_refine.csv --sfile=final_contigs_gt1000_c10K_nr_species.csv --ffile=../Assembly/final_contigs_c10K.fa --ofile=Taxa_Conf.csv
 ```
 Now the results will be somewhat different...
 ```
-N	M	TL	S	K	Rec.	Prec.	NMI	Rand	AdjRand
-83423	1181	6.0372e+06	27	145	0.838478	0.985446	0.691768	0.885122	0.771553
+N       M       TL      S       K       Rec.    Prec.   NMI     Rand    AdjRand
+83338   1132    5.9010e+06      26      145     0.839512        0.982511        0.684733        0.883928        0.769207
 ```
 
 Then plot:
@@ -421,7 +417,7 @@ Then plot:
 $CONCOCT/scripts/ConfPlot.R -c Taxa_Conf.csv -o Taxa_Conf.pdf
 ```
 
-![Taxa confusion](../Figures/Taxa_Conf.png)
+![Taxa confusion](../Figures/Taxa_Conf.pdf)
 
 ## Construct a phylogenetic tree
 
