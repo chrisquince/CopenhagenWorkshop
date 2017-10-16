@@ -7,29 +7,6 @@ Begin by logging into VM:
 ssh -X ubuntu@137.205.69.49
 ```
 
-May need this:
-```
-source .profile 
-```
-
-Discussion point environment variables and configuration files.
-
-Some useful repositories should already be on the system (do not run the following):
-
-
-~~mkdir ~/repos~~
-
-~~cd repos~~
-
-~~git clone https://github.com/chrisquince/WorkshopSept2017.git~~
-
-
-and another two we will need:
-
-
-~~git clone https://github.com/chrisquince/MAGAnalysis.git~~
-~~git clone https://github.com/chrisquince/StrainMetaSim.git~~
-
 ## Data sets
 
 All the tutorial data sets are available in the Data directory go and have a look:
