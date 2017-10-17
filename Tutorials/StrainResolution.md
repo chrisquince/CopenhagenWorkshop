@@ -1,9 +1,116 @@
 # Strain Resolution
 
-## Getting started
+## Reference based strain resolution
 
-This tutorial describes a complete walkthrough for CONCOCT2 and DESMAN on the STAMPS servers using 4 threads. Some of of the pre-processing steps are time consuming and not that informative. These have been pre-run and you will just copy across the output.
-We will begin by constructing a new working directory in our home directories:
+Zhemin's Salmonella database!
+```
+GCF_000756465.1
+GCF_000487915.2
+GCF_000487615.2
+GCF_000020885.1
+GCF_000252995.1
+GCF_000008105.1
+GCF_000430125.1
+GCF_000020925.1
+GCF_000009505.1
+GCF_000020705.1
+GCF_000953495.1
+GCF_000341425.1
+GCF_000188955.2
+GCF_000016045.1
+GCF_000011885.1
+GCF_000018385.1
+GCF_000018705.1
+GCF_000020745.1
+GCF_000486405.2
+GCF_000473275.1
+GCF_000007545.1
+GCF_000006945.1
+```
+
+How do we get these?
+
+Lets make a new database directory.
+
+```
+cd ~/Databases
+mkdir Salmonella
+cd Salmonella
+```
+
+Get list of Prokaryote genomes on NCBI
+```
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/genbank/bacteria/assembly_summary.txt
+```
+
+Have a look at this file. Copy and paste the accessions above into a new file
+`Salm_Acc.txt`. Then pull out lines from summary that match:
+
+```
+grep -Fwf Salm_Acc.txt assembly_summary.txt | cut -f1,6,7,8,20 > Salm_select.txt
+
+```
+
+One is missing! Now download them automatically
+
+```
+while read id blah blah2 blah3 path
+do
+    mkdir $id
+    cd $id
+
+    echo $id
+
+    wget $path/*_genomic.fna.gz
+    gunzip *gz
+    cd ..
+done < Salm_select.txt
+```
+
+Do not want the rna or cds:
+```
+rm */*rna*
+rm */*cds*
+```
+
+Now build BWA indices:
+```
+for dir in GCA*/
+do
+    echo $dir
+    cd $dir
+    for file in *.fna
+    do
+        stub=${dir%\/}
+        echo $stub
+        bwa index $file 
+    done
+    cd ..
+done
+```
+
+
+
+Now we will test out our database!
+```
+cd ~/Projects/Ragna/NotHuman
+
+mkdir MapSReference
+cd MapSReference
+
+for refFile in ~/Databases/Salmonella/*/*fna
+do
+    stub=${refFile#/home/ubuntu/Databases/Salmonella/}
+    stub=${stub%\/*fna}
+    echo $stub
+    bwa mem -t 8 $refFile ../sk152_dentine_nothuman.fq > ${stub}.sam
+done 
+```
+
+
+## Getting started on de novo strain resolution
+
+This tutorial describes a complete walkthrough for CONCOCT2 and DESMAN for the synthetic data sets.
 
 ```bash
 cd ~/Projects
@@ -42,7 +149,7 @@ I previously co-assembled the reads using MEGAHIT 1.1.1 and default parameters:
 ```
 ls Reads/*r1*gz | tr "\n" "," | sed 's/,$//' > r1.csv
 ls Reads/*r2*gz | tr "\n" "," | sed 's/,$//' > r2.csv
-megahit -1 $(<r1.csv) -2 $(<r2.csv) -t 4 -o Assembly 
+megahit -1 $(<r1.csv) -2 $(<r2.csv) -t 16 -o Assembly 
 ```
 
 This should take approximately 20 minutes. 
@@ -247,7 +354,8 @@ median number of single-copy core genes:
 ```bash
 cp /home/ubuntu/repos/CONCOCT/scgs/scg_cogs_min0.97_max1.03_unique_genera.txt scgs.txt
 tr -d "\r" < scgs.txt > scgsR.txt
-CountSCGs.pl scgsR.txt < Annotate/final_contigs_gt1000_c10K.cogs | cut -d"," -f2 | awk -f ~/bin/median.awk
+CountSCGs.pl scgsR.txt < final_contigs_gt1000_c10K.cogs | cut -d"," -f2 | awk -f ~/bin/median.awk
+cd ..
 ```
 
 This should give **8** which since that is our species number is reassuring.
@@ -291,7 +399,7 @@ R
 >q()
 ```
 
-We have two clusters, Cluster12 and Cluster9 that have a total coverage 
+We have two clusters, Cluster13 and Cluster14 (these may different for you keep track of that) that have a total coverage 
 of > 100 and are 75% pure and complete, this is typically the minimum coverage necessary for strain resolution.
 
 ### Comparing to known reference genome assignments
@@ -299,6 +407,7 @@ of > 100 and are 75% pure and complete, this is typically the minimum coverage n
 These reads were generated synthetically _in silico_ from known genomes. It is therefore possible to compare the CONCOCT binning results to the assignments of contigs to genomes. This will not be possible for a genuine experimental metagenome. The assignments of contigs to genomes have been precomputed for you:
 
 ```bash
+cd ~/Projects/Synthetics
 mkdir AssignContigs
 cd AssignContigs
 for file in ../Map/*sorted.bam; do samtools index $file; done
@@ -349,6 +458,7 @@ cd ..
 
 Then we select the SCGS for each cluster:
 ```bash
+cp ~/repos/MAGAnalysis/scgs.txt s.
 while read -r cluster 
 do
     echo $cluster
@@ -366,13 +476,13 @@ do
     grep ">" Split/${cluster}/${cluster}.fa | sed 's/>//g' > Split/${cluster}/${cluster}_contigs.txt
     AddLengths.pl Annotate/final_contigs_gt1000_c10K.len < Split/${cluster}/${cluster}_contigs.txt > Split/${cluster}/${cluster}_contigs.tsv
     mkdir SplitBam/${cluster}
-
+    echo $line
     for bamfile in Map/*.mapped.sorted.bam
     do
         stub=${bamfile#Map\/}
         stub=${stub%.mapped.sorted.bam}
         
-        samtools view -bhL Split/${cluster}/${cluster}_contigs.tsv $bamfile > SplitBam/${cluster}/${stub}_Filter.bam&
+        samtools view -bhL Split/${cluster}/${cluster}_contigs.tsv $bamfile > SplitBam/${cluster}/${stub}_Filter.bam
 
     done 
     wait    
@@ -405,13 +515,12 @@ do
             
         echo $stub
 
-        (samtools index $bamfile; bam-readcount -w 1 -q 20 -l "${mag}_contigs.tsv" -f ../../Split/${mag}/${mag}.fa $bamfile 2> ReadcountFilter/${stub}.err > ReadcountFilter/${stub}.cnt)
+        (samtools index $bamfile; bam-readcount -w 1 -q 20 -l "${mag}_contigs.tsv" -f ../../Split/${mag}/${mag}.fa $bamfile 2> ReadcountFilter/${stub}.err > ReadcountFilter/${stub}.cnt)&
     
      done
      cd ..
      cd ..
      wait
-    
 done < Concoct/Cluster75.txt
 
 ``` 
@@ -425,36 +534,28 @@ mkdir Variants
 while read -r cluster 
 do
     echo $cluster
-    cd ./SplitBam/${cluster}/ReadcountFilter
-    gzip *cnt
-    cd ../../..
-    python $DESMAN/scripts/ExtractCountFreqGenes.py Split/${cluster}/${cluster}_core.cogs ./SplitBam/${cluster}/ReadcountFilter --output_file Variants/${cluster}_scg.freq > Variants/${cluster}log.txt
+    (cd ./SplitBam/${cluster}/ReadcountFilter; gzip *cnt; cd ../../..; python $DESMAN/scripts/ExtractCountFreqGenes.py Split/${cluster}/${cluster}_core.cogs ./SplitBam/${cluster}/ReadcountFilter --output_file Variants/${cluster}_scg.freq > Variants/${cluster}log.txt)&
 
 done < Concoct/Cluster75.txt 
 ``` 
 
-The directory contains 8 .freq files one for each cluster. If we look at one:
+The directory contains 7 .freq files one for each cluster. If we look at one:
 ```bash
-head -n 10 Variants/Cluster2_scg.freq 
+head -n 10 Variants/Cluster13_scg.freq 
 ```
 We see it comprises a header, plus one line for each core gene position, giving base frequencies in the order A,C,G,T. This is the input required by DESMAN.
 
 ### Detecting variants on core genes
 
-This may be necessary to get DESMAN accessory scripts to work:
-```bash
-export PATH=/class/stamps-software/desman/lib/python2.7/site-packages/desman-0.1.dev0-py2.7-linux-x86_64.egg/desman:$PATH
-```
-
 First we detect variants on both clusters that were identified as 75% pure and complete and had a coverage of greater than 100:
 
 ```bash
 
-cd $METASIMWD
+cd ~/Projects/Synthetic/
 
 mkdir SCG_Analysis
 
-for file in ./Variants/Cluster7_scg.freq ./Variants/Cluster16_scg.freq
+for file in ./Variants/Cluster13_scg.freq ./Variants/Cluster14_scg.freq
 do
     echo $file
 
@@ -468,7 +569,7 @@ do
     cp $file SCG_Analysis/$stub
     cd SCG_Analysis/$stub    
 
-    Variant_Filter.py ${stub}.freq -o $stub -m 1.0 -f 25.0 -c -sf 0.80 -t 2.5 
+    $DESMAN/desman/Variant_Filter.py ${stub}.freq -o $stub -m 1.0 -f 25.0 -c -sf 0.80 -t 2.5 
     
     cd ../..
 done
@@ -482,15 +583,15 @@ cd SCG_Analysis
 wc */*sel_var.csv
 ```
 
-We can also go into the Cluster 16 directory and look at the output files:
+We can also go into the Cluster 14 directory and look at the output files:
 ```bash
-cd Cluster16_scg
-more Cluster16_scgsel_var.csv 
+cd Cluster14_scg
+more Cluster14_scgsel_var.csv 
 ```
 
 The other important file is:
 ```bash
-more Cluster16_scgtran_df.csv
+more Cluster14_scgtran_df.csv
 ```
 
 This is an estimate of base error rates which is used as a starting point for the haplotype inference.
@@ -498,14 +599,14 @@ This is an estimate of base error rates which is used as a starting point for th
 
 ### Inferring haplotypes
 
-So accounting for the header line we observe 17 and 0 variants in Clusters 16 and 7 respectively. For only Cluster 16 then can we attempt to actually resolve haplotypes. Using the desman executable:
+So accounting for the header line we observe 18 and 0 variants in Clusters 14 and 13 respectively. For only Cluster 14 then can we attempt to actually resolve haplotypes. Using the desman executable:
 
 ```
-cd $METASIMWD/SCG_Analysis/Cluster16_scg
+cd Cluster14_scg
 
-varFile='Cluster16_scgsel_var.csv'
+varFile='Cluster14_scgsel_var.csv'
 
-eFile='Cluster16_scgtran_df.csv'
+eFile='Cluster14_scgtran_df.csv'
     
 for g in 1 2 3 4  
 do
@@ -513,8 +614,9 @@ do
     for r in 0 1 2 3 4
     do
 	    echo $r
-        desman $varFile -e $eFile -o Cluster16_${g}_${r} -g $g -s $r -m 1.0 -i 100 
+        (desman $varFile -e $eFile -o Cluster14_${g}_${r} -g $g -s $r -m 1.0 -i 100)& 
     done
+    wait
 done
 ```
 
