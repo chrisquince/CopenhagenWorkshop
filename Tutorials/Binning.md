@@ -64,6 +64,12 @@ Evaluate the assembly:
 contig-stats.pl < Assembly/final.contigs.fa
 ```
 
+Create assembly graph
+```
+cd Assembly
+ megahit_toolkit contig2fastg 71 final.contigs.fa > final.contigs.fastg
+```
+
 This is a reasonable assembly but with relatively few reads actually assembled.
 
 Quickly run centrifuge to see what organisms these derive from:
