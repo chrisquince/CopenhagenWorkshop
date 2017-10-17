@@ -89,6 +89,22 @@ do
 done
 ```
 
+Need to also store genome lengths for coverage calculations.
+
+```
+for dir in GCA*/
+do
+    echo $dir
+    cd $dir
+    for file in *.fna
+    do
+        stub=${dir%\/}
+        python $DESMAN/scripts/Lengths.py -i $file > ${stub}.len
+
+    done
+    cd ..
+done
+```
 
 
 Now we will test out our database!
@@ -105,6 +121,21 @@ do
     echo $stub
     bwa mem -t 8 $refFile ../sk152_dentine_nothuman.fq > ${stub}.sam
 done 
+```
+
+Process sam files as before:
+
+```
+for file in *.sam
+do
+    stub=${file%.sam}
+
+    echo $stub  
+    samtools view -h -b -S $file > ${stub}.bam
+    samtools view -b -F 4 ${stub}.bam > ${stub}.mapped.bam
+    samtools sort -m 1000000000 ${stub}.mapped.bam -o ${stub}.mapped.sorted.bam
+    bedtools genomecov -ibam ${stub}.mapped.sorted.bam -g ~/Databases/Salmonella/${stub}/${stub}.len > ${stub}_cov.txt
+done
 ```
 
 
@@ -630,7 +661,7 @@ Which we can then visualise:
 $DESMAN/scripts/PlotDev.R -l Dev.csv -o Dev.pdf
 ```
 
-![Posterior deviance](Figures/Dev.pdf)
+![Posterior deviance](../Figures/Dev.pdf)
 
 There are clearly two haplotypes. We can also run the heuristic to determine haplotype number:
 
