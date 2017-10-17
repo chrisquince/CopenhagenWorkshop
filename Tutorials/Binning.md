@@ -38,11 +38,62 @@ This will involve a collection of different software programs:
 
 <a name="coassembly"/>
 
-## Co-assembly
+## Assembly
 
-We begin by performing a co-assembly of these samples using a program called megahit:
+We will now explore metagenomics assembly using the Ragna sample:
 
 ```
+cd ~/Projects/Ragna/NotHuman
+```
+
+Lets have a look at the read lengths (just top 1000000 will do):
+```
+head -n 1000000 sk152_dentine_nothuman.fq > h1e6.fq
+python ~/bin/LengthsQ.py -i h1e6.fq > h1e6.len
+cat h1e6.len | cut -f2 | awk -f ~/bin/median.awk
+```
+
+and try megahit with appropriate kmer sizes:
+```
+megahit -r sk152_dentine_nothuman.fq --k-min 21 --k-max 71 --k-step 20 -o Assembly
+```
+
+Evaluate the assembly:
+
+```
+contig-stats.pl < Assembly/final.contigs.fa
+```
+
+This is a reasonable assembly but with relatively few reads actually assembled.
+
+Quickly run centrifuge to see what organisms these derive from:
+
+```
+cd Assembly
+centrifuge -x ~/Databases/Centrifuge/p_compressed -U final.contigs.fa -f --threads 8
+
+```
+
+No Salmonella!
+
+Lets try spades:
+
+```
+spades.py -s sk152_dentine_nothuman.fq -o Assembly_S -k 21,41,61,71
+```
+
+```
+cd ../Assembly_S
+centrifuge -x ~/Databases/Centrifuge/p_compressed -U Contigs.fasta -f --threads 8
+```
+
+## Co-assembly
+
+We will now return to the AD samples performing a co-assembly of these samples using 
+megahit:
+
+```
+cd ~/Projets/AD
 ls ReadsSub/*R1.fastq | tr "\n" "," | sed 's/,$//' > R1.csv
 ls ReadsSub/*R2.fastq | tr "\n" "," | sed 's/,$//' > R2.csv
 ```
@@ -335,6 +386,7 @@ Discussion point, when is a module present? What about methanogenesis modules?
 
 There are many ways to taxonomically classify assembled sequence. We suggest a gene based approach. The first step is to call genes on all contigs that are greater than 1,000 bp. Shorter sequences are unlikely to contain complete 
 coding sequences. 
+
 
 Set the environment variable NR_DMD to point to the location of your formatted NR database:
 ```
