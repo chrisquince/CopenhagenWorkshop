@@ -138,6 +138,33 @@ do
 done
 ```
 
+```
+for i in *_cov.txt 
+do 
+   echo $i
+   stub=${i%_cov.txt}
+
+   echo $stub
+   awk -F"\t" '{l[$1]=l[$1]+($2 *$3);r[$1]=$4} END {for (i in l){print i","(l[i]/r[i])}}' $i > ${stub}_cov.csv
+done
+```
+
+Now list of dir name and mean genome depth of coverage:
+```
+for file in *csv; do stub=${file%_cov.csv}; printf "$stub,"; grep "genome" $file; done > strain_cov.txt
+```
+
+```
+sort --field-separator=',' --key=3 strain_cov.txt
+```
+
+```
+bedtools genomecov -d -ibam GCA_000018385.1.mapped.sorted.bam > GCA_000018385.1.depth.tsv
+```
+
+Really need to remove PCR duplicates though. Probably recommend picard tools for that.
+
+![Depth][../Figures/Depth5k.pdf]
 
 ## Getting started on de novo strain resolution
 
@@ -666,12 +693,12 @@ $DESMAN/scripts/PlotDev.R -l Dev.csv -o Dev.pdf
 There are clearly two haplotypes. We can also run the heuristic to determine haplotype number:
 
 ```bash
-python $DESMAN/scripts/resolvenhap.py Cluster16
+python $DESMAN/scripts/resolvenhap.py Cluster14
 ```
 
 This should output:
 ```
-2,2,3,0.0,Cluster16_2_3/Filtered_Tau_star.csv
+2,2,2,0.0,Cluster14_2_2/Filtered_Tau_star.csv
 ```
 
 This has the format:
@@ -681,39 +708,40 @@ No of haplotypes in best fit, No. of good haplotypes in best fit, Index of best 
 
 Have a look at the prediction file:
 ```
-more Cluster16_2_3/Filtered_Tau_star.csv
+more Cluster14_2_2/Filtered_Tau_star.csv
 ```
 
 The position encoding is ACGT so what are the base predictions at each variant position? 
 We can turn these into actual sequences with the following commands:
 
 ```bash
-    cut -d"," -f 1 < Cluster16_scgcogf.csv | sort | uniq | sed '1d' > coregenes.txt
+    cut -d"," -f 1 < Cluster14_scgcogf.csv | sort | uniq | sed '1d' > coregenes.txt
 
-    mkdir SCG_Fasta_2_3
+    mkdir SCG_Fasta_2_2
     
-    python $DESMAN/scripts/GetVariantsCore.py ../../Annotate/final_contigs_gt1000_c10K.fa ../..//Split/Cluster16/Cluster16_core.cogs Cluster16_2_3/Filtered_Tau_star.csv coregenes.txt -o SCG_Fasta_2_3/
+    python $DESMAN/scripts/GetVariantsCore.py ../../Annotate/final_contigs_gt1000_c10K.fa ../..//Split/Cluster14/Cluster14_core.cogs Cluster14_2_2/Filtered_Tau_star.csv coregenes.txt -o SCG_Fasta_2_2/
 ```
 
 This generates one fasta sequence file for each gene with the two strains in:
 
 ```bash
-ls SCG_Fasta_2_3
+ls SCG_Fasta_2_2
 ```
 
-In this case we know Cluster16 maps onto species 2095, which reassuringly has two strains present. I have pre-calculated the true variants between these two strains.
+In this case we know Cluster14 maps onto species 2095, which reassuringly has two strains present. I have pre-calculated the true variants between these two strains.
 
-```bash 
-cp  /class/stamps-shared/CDTutorial/DesmanValidation/Cluster16_core_tauRF.csv .
+```bash
+wget https://septworkshop.s3.climb.ac.uk/Cluster14_core_tau.csv
 
-python $DESMAN/scripts/validateSNP2.py Cluster16_2_3/Filtered_Tau_star.csv Cluster16_core_tauRF.csv
-```
+python $DESMAN/scripts/validateSNP2.py Cluster14_2_2/Filtered_Tau_star.csv Cluster14_core_tau.csv
+``` 
+
 
 This gives distance matrices between the true variants and the predictions in terms of SNV and fractions:
 ```bash
-Intersection: 16
-[[ 0 16]
- [16  0]]
+Intersection: 15
+[[ 0 15]
+ [15  0]]
 [[ 0.  1.]
  [ 1.  0.]]
 ```
