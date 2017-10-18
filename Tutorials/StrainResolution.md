@@ -373,7 +373,7 @@ To determine how good our binning is we need to annotate the contigs with cluste
 
 Assign COGs change the -c flag which sets number of parallel processes appropriately:
 ```
-    export COGSDB_DIR=/home/ubuntu/Databases/CDTutorial/rpsblast_cog_db/
+    export COGSDB_DIR=/home/ubuntu/Databases/rpsblast_cog_db/
     $CONCOCT/scripts/RPSBLAST.sh -f final_contigs_gt1000_c10K.faa -p -c 4 -r 1
 ```
 
