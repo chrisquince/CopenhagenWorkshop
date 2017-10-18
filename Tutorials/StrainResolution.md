@@ -752,19 +752,57 @@ Each predicted haplotype should match onto a reference strain with no errors.
 The next step would be to calculate the accessory gene presence and absences for these strains. 
 
 ```
-cd ~/Projects/Synthetic/SCG_Analysis/
+cd ~/Projects/Synthetic/
 
 mkdir AllFreq
 
-python $DESMAN/scripts/ExtractCountFreqGenes.py -g ./Split/Cluster14/Cluster14.genes ./SplitBam/${cluster}/ReadcountFilter --output_file AllFreq/Cluster14.freq
-
 cd AllFreq
 
+
+$DESMAN/scripts/ExtractCountFreqGenes.py Split/${cluster}/${cluster}_core.cogs ./SplitBam/${cluster}/ReadcountFilter --output_file Variants/${cluster}_scg.freq
+
+```
+
+Then we get frequencies but now for all genes:
+
+```
+python $DESMAN/scripts/ExtractCountFreqGenes.py -g ./Split/Cluster14/Cluster14.genes ./SplitBam/Cluster14/ReadcountFilter --output_file AllFreq/Cluster14.freq
+
+```
+
+and find variants on those genes:
+
+```
+cd AllFreq
 python $DESMAN/desman/Variant_Filter.py Cluster14.freq -o Cluster14 -m 1. -f 25.0 -p
+```
 
+We also need gene coverages these we compute from the frequencies:
 
-cd Cluster14_2_2
-python $DESMAN/desman/GeneAssign.py ${cluster}_coremean_sd_df.csv Gamma_star.csv ../${cluster}/${cluster}_gene_cov.csv Eta_star.csv -m 20 -v ../${cluster}/${cluster}M0sel_var.csv -o ${cluster} --assign_tau
+```
+python $DESMAN/scripts/CalcGeneCov.py Cluster14.freq > Cluster14_gene_cov.csv
+```
+
+```
+cut -d"," -f5 ../Split/Cluster14/Cluster14_core.cogs > Cluster14_core_genes.txt
+```
+
+Calculate coverage on core genes:
+
+```
+python $DESMAN/scripts/CalcDelta.py Cluster14_gene_cov.csv Cluster14_core_genes.txt Cluster14_core
+```
+
+Now lets link the best run from DESMAN for convenience:
+
+```
+ln -s ../SCG_Analysis/Cluster14_scg/Cluster14_2_2 .
+```
+
+and finally:
+
+```
+python $DESMAN/desman/GeneAssign.py Cluster14_coremean_sd_df.csv Cluster14_2_2/Gamma_star.csv Cluster14_gene_cov.csv Cluster14_2_2/Eta_star.csv -m 20 -v Cluster14sel_var.csv -o Cluster14 --assign_tau
 ```
 
 ```
