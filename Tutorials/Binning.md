@@ -342,6 +342,20 @@ python ~/bin/CompleteClusters.py ../Concoct/clustering_refine_scg.tsv > Cluster7
     done < Cluster75.txt
 ```
 
+Run this instead:
+
+```
+while read line
+do 
+    echo $file
+  
+    file=${line}/${line}.m8
+  
+    cp ~/Projects_run/AD/Split/$file $file
+  
+done < Cluster75.txt
+```
+
 
 Discussion point why blastp rather than blastx?
 
