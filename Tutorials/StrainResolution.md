@@ -164,7 +164,7 @@ bedtools genomecov -d -ibam GCA_000018385.1.mapped.sorted.bam > GCA_000018385.1.
 
 Really need to remove PCR duplicates though. Probably recommend picard tools for that.
 
-![Depth][../Figures/Depth5k.pdf]
+![Depth](../Figures/Depth5k.pdf)
 
 ## Getting started on de novo strain resolution
 
