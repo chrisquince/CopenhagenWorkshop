@@ -749,18 +749,22 @@ Each predicted haplotype should match onto a reference strain with no errors.
 
 ### Accessory Gene assignment
 
-The next step would be to calculate the accessory gene presence and absences for these strains. That too will be left to an open lab if there is interest.
-
-
-
+The next step would be to calculate the accessory gene presence and absences for these strains. 
 
 ```
-cd $METASIMWD
-cp /class/stamps-shared/CDTutorial/Cluster16.tar.gz .
-tar -xvzf Cluster16.tar.gz
-cd Cluster16
-python $DESMAN/desman/GeneAssign.py ${cluster}_coremean_sd_df.csv $SEL_RUN/Gamma_star.csv ../${cluster}/${cluster}_gene_cov.csv $SEL_RUN/Eta_star.csv -m 20 -v ../${cluster}/${cluster}M0sel_var.csv -
-o ${cluster} --assign_tau
+cd ~/Projects/Synthetic/SCG_Analysis/
+
+mkdir AllFreq
+
+python $DESMAN/scripts/ExtractCountFreqGenes.py -g ./Split/Cluster14/Cluster14.genes ./SplitBam/${cluster}/ReadcountFilter --output_file AllFreq/Cluster14.freq
+
+cd AllFreq
+
+python $DESMAN/desman/Variant_Filter.py Cluster14.freq -o Cluster14 -m 1. -f 25.0 -p
+
+
+cd Cluster14_2_2
+python $DESMAN/desman/GeneAssign.py ${cluster}_coremean_sd_df.csv Gamma_star.csv ../${cluster}/${cluster}_gene_cov.csv Eta_star.csv -m 20 -v ../${cluster}/${cluster}M0sel_var.csv -o ${cluster} --assign_tau
 ```
 
 ```
