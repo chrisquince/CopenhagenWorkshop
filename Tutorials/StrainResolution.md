@@ -435,7 +435,7 @@ We should see 8 nearly complete bins and some fragmentary ones:
 
 We want to store a list of 75% complete and pure for DESMAN analysis:
 ```
-python $CDSCRIPTS/CompleteClusters.py clustering_gt1000_scg.tsv > Cluster75.txt
+python ~/bin/CompleteClusters.py clustering_gt1000_scg.tsv > Cluster75.txt
 ```
 
 ### How to calculate cluster coverages
