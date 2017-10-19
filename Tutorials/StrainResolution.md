@@ -465,7 +465,7 @@ of > 100 and are 75% pure and complete, this is typically the minimum coverage n
 These reads were generated synthetically _in silico_ from known genomes. It is therefore possible to compare the CONCOCT binning results to the assignments of contigs to genomes. This will not be possible for a genuine experimental metagenome. The assignments of contigs to genomes have been precomputed for you:
 
 ```bash
-cd ~/Projects/Synthetics
+cd ~/Projects/Synthetic
 mkdir AssignContigs
 cd AssignContigs
 for file in ../Map/*sorted.bam; do samtools index $file; done
@@ -516,7 +516,7 @@ cd ..
 
 Then we select the SCGS for each cluster:
 ```bash
-cp ~/repos/MAGAnalysis/scgs.txt s.
+cp ~/repos/MAGAnalysis/scgs.txt .
 while read -r cluster 
 do
     echo $cluster

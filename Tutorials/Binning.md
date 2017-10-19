@@ -507,7 +507,7 @@ do
     cog=$line
     echo $cog
     cat ~/Databases/NCBI/Cogs/All_$cog.ffn SCGs/${cog}.ffn > AlignAll/${cog}_all.ffn
-    mafft --thread 64 AlignAll/${cog}_all.ffn > AlignAll/${cog}_all.gffn
+    mafft --thread 12 AlignAll/${cog}_all.ffn > AlignAll/${cog}_all.gffn
 done < cogs.txt
 ```
 
